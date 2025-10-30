@@ -2,8 +2,14 @@ import { NextResponse } from 'next/server';
 import { openRouterClient } from '@/lib/openrouter';
 
 export async function POST(request: Request) {
+  let country1 = 'Country A';
+  let country2 = 'Country B';
+  
   try {
-    const { country1, country2, factors } = await request.json();
+    const body = await request.json();
+    country1 = body.country1;
+    country2 = body.country2;
+    const factors = body.factors;
     
     if (!country1 || !country2) {
       return NextResponse.json({ error: 'Both countries are required' }, { status: 400 });

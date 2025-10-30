@@ -81,7 +81,7 @@ export class OpenRouterClient {
     ];
 
     const response = await this.chat(messages);
-    
+
     try {
       return JSON.parse(response);
     } catch {
@@ -126,7 +126,7 @@ export class OpenRouterClient {
     ];
 
     const response = await this.chat(messages);
-    
+
     try {
       return JSON.parse(response);
     } catch {
@@ -155,7 +155,7 @@ export class OpenRouterClient {
     ];
 
     const response = await this.chat(messages);
-    
+
     try {
       return JSON.parse(response);
     } catch {
@@ -197,4 +197,38 @@ export class OpenRouterClient {
   }
 }
 
-export const openRouterClient = new OpenRouterClient();
+// Lazy-loaded client to avoid requiring API key during build
+let _openRouterClient: OpenRouterClient | null = null;
+
+export const openRouterClient = {
+  get client(): OpenRouterClient {
+    if (!_openRouterClient) {
+      _openRouterClient = new OpenRouterClient();
+    }
+    return _openRouterClient;
+  },
+
+  async chat(messages: OpenRouterMessage[], model?: string): Promise<string> {
+    return this.client.chat(messages, model);
+  },
+
+  async analyzeConflictProbability(country1: string, country2: string) {
+    return this.client.analyzeConflictProbability(country1, country2);
+  },
+
+  async generatePeaceTreaty(country1: string, country2: string, conflictFactors: string[]) {
+    return this.client.generatePeaceTreaty(country1, country2, conflictFactors);
+  },
+
+  async analyzeEnvironmentalData(region: string, dataType: string, currentValue: number) {
+    return this.client.analyzeEnvironmentalData(region, dataType, currentValue);
+  },
+
+  async analyzeTerrorismRisk(country: string, organization: string) {
+    return this.client.analyzeTerrorismRisk(country, organization);
+  },
+
+  async answerGlobalQuestion(question: string, context?: string) {
+    return this.client.answerGlobalQuestion(question, context);
+  }
+};
