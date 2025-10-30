@@ -16,6 +16,20 @@ import {
 
 const features = [
   {
+    title: '3D Global Intelligence',
+    description: 'Interactive 3D globe showing real-time conflicts and environmental data',
+    icon: Globe,
+    href: '/globe',
+    color: 'from-cyan-500 to-blue-500'
+  },
+  {
+    title: 'Advanced Features',
+    description: 'Time machine, crisis dashboard, AI simulator, and voice chat capabilities',
+    icon: Zap,
+    href: '/advanced',
+    color: 'from-purple-600 to-pink-600'
+  },
+  {
     title: 'Peace & Conflict Intelligence',
     description: 'AI-powered conflict probability analysis and peace treaty generation',
     icon: Shield,
@@ -44,8 +58,8 @@ const features = [
     color: 'from-purple-500 to-pink-500'
   },
   {
-    title: 'AI Earth Chatbot',
-    description: 'Ask Oracle Earth anything about global affairs, conflicts, and sustainability',
+    title: 'Chat with Earth',
+    description: 'Communicate directly with our planet about global affairs, conflicts, and sustainability',
     icon: MessageCircle,
     href: '/chatbot',
     color: 'from-indigo-500 to-blue-500'
@@ -92,9 +106,9 @@ export default function Home() {
               </Button>
             </Link>
             <Link href="/chatbot">
-              <Button variant="outline" size="lg" className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white px-8 py-3">
-                <MessageCircle className="mr-2 h-5 w-5" />
-                Ask Oracle Earth
+              <Button variant="outline" size="lg" className="border-green-400 text-green-400 hover:bg-green-400 hover:text-white px-8 py-3">
+                <Globe className="mr-2 h-5 w-5" />
+                Chat with Earth
               </Button>
             </Link>
           </div>

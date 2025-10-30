@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+
+
 import { 
   Globe, 
   Shield, 
@@ -10,16 +12,19 @@ import {
   AlertTriangle, 
   TrendingUp, 
   MessageCircle,
-  Brain
+  Brain,
+  Zap
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Home', href: '/', icon: Globe },
+  { name: '3D Globe', href: '/globe', icon: Globe },
+  { name: 'Advanced Features', href: '/advanced', icon: Zap },
   { name: 'Peace & Conflict', href: '/peace-conflict', icon: Shield },
   { name: 'Environment', href: '/environment', icon: Leaf },
   { name: 'Counter-Terrorism', href: '/counter-terrorism', icon: AlertTriangle },
   { name: 'Global Economy', href: '/economy', icon: TrendingUp },
-  { name: 'AI Chatbot', href: '/chatbot', icon: MessageCircle },
+  { name: 'Chat with Earth', href: '/chatbot', icon: MessageCircle },
 ];
 
 export function Navigation() {

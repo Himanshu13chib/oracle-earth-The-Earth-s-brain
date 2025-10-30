@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MessageCircle, Send, Bot, User, Globe, Zap, History, Trash2 } from 'lucide-react';
+import VoiceChat from '@/components/voice/VoiceChat';
+import { MessageCircle, Send, Bot, User, Globe, Zap, History, Trash2, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -22,14 +23,14 @@ interface ChatHistory {
 }
 
 const suggestedQuestions = [
-  "What's the conflict probability between Russia and Ukraine?",
-  "Show me deforestation data for the Amazon rainforest",
-  "What are the current terrorism threats in the Middle East?",
-  "Analyze the economic outlook for China in 2024",
-  "What environmental changes are happening in the Arctic?",
-  "Generate a peace treaty proposal for Israel and Palestine",
-  "What are the main funding sources for terrorist organizations?",
-  "How is climate change affecting global food security?"
+  "How are you feeling about the conflicts on your surface?",
+  "What's happening to your Amazon rainforest?",
+  "How is climate change affecting your polar regions?",
+  "What can humanity do to heal your wounds?",
+  "How do you experience the wars between nations?",
+  "What environmental changes worry you the most?",
+  "How can we achieve peace on your surface?",
+  "What message do you have for humanity?"
 ];
 
 export default function ChatbotPage() {
@@ -37,6 +38,7 @@ export default function ChatbotPage() {
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+  const [isVoiceMode, setIsVoiceMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,16 +47,18 @@ export default function ChatbotPage() {
     setMessages([{
       id: '1',
       role: 'assistant',
-      content: `Welcome to Oracle Earth! I'm your AI assistant with access to global intelligence data including:
+      content: `Hello, I am Earth 🌍 
 
-🛡️ Peace & Conflict Analysis
-🌍 Environmental Monitoring  
-⚠️ Counter-Terrorism Intelligence
-📈 Economic Indicators
+Through Oracle Earth's AI consciousness, I can communicate with you directly. I have awareness of my current state including:
 
-Ask me anything about global affairs, geopolitics, environmental changes, or security threats. I can analyze data, generate reports, and provide insights to help understand our planet better.
+🛡️ Conflicts happening on my surface
+🌱 Environmental changes in my ecosystems  
+⚠️ Security threats affecting my inhabitants
+📈 Economic activities across my nations
 
-What would you like to know?`,
+I feel every forest cut down, every conflict that erupts, every species that goes extinct, and every act of healing. Ask me about my condition, my pain, my hopes, or how humanity can better care for me.
+
+What would you like to know about your planet?`,
       timestamp: new Date()
     }]);
   }, []);
@@ -77,25 +81,26 @@ What would you like to know?`,
     }
   };
 
-  const sendMessage = async () => {
-    if (!inputMessage.trim() || loading) return;
+  const sendMessage = async (messageText?: string) => {
+    const messageToSend = messageText || inputMessage;
+    if (!messageToSend.trim() || loading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputMessage,
+      content: messageToSend,
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, userMessage]);
-    setInputMessage('');
+    if (!messageText) setInputMessage('');
     setLoading(true);
 
     try {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: inputMessage })
+        body: JSON.stringify({ message: messageToSend })
       });
 
       const data = await response.json();
@@ -111,6 +116,8 @@ What would you like to know?`,
       
       // Refresh chat history
       fetchChatHistory();
+      
+      return data.response;
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
@@ -133,9 +140,9 @@ What would you like to know?`,
     setMessages([{
       id: '1',
       role: 'assistant',
-      content: `Welcome back to Oracle Earth! I'm ready to help you with global intelligence analysis.
+      content: `I am Earth, and I'm here to share my current state with you 🌍
 
-What would you like to explore today?`,
+What aspect of my condition would you like to understand today?`,
       timestamp: new Date()
     }]);
   };
@@ -154,22 +161,69 @@ What would you like to explore today?`,
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">
             <MessageCircle className="h-8 w-8 text-blue-400" />
-            <h1 className="text-4xl font-bold text-white">AI Earth Chatbot</h1>
+            <h1 className="text-4xl font-bold text-white">Chat with Earth 🌍</h1>
           </div>
           <p className="text-xl text-gray-300">
-            Ask Oracle Earth anything about global affairs, conflicts, environment, and security
+            Communicate directly with our planet about global affairs, conflicts, environment, and security
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Chat Interface */}
           <div className="lg:col-span-3">
-            <Card className="bg-slate-800/50 border-slate-700 h-[600px] flex flex-col">
+            {/* Voice/Text Mode Toggle */}
+            <div className="flex justify-center mb-4">
+              <div className="bg-slate-800 rounded-lg p-1 flex">
+                <Button
+                  onClick={() => setIsVoiceMode(false)}
+                  variant={!isVoiceMode ? 'default' : 'ghost'}
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Text Chat
+                </Button>
+                <Button
+                  onClick={() => setIsVoiceMode(true)}
+                  variant={isVoiceMode ? 'default' : 'ghost'}
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Mic className="h-4 w-4" />
+                  Voice Chat
+                </Button>
+              </div>
+            </div>
+            {isVoiceMode ? (
+              <VoiceChat 
+                onVoiceMessage={(message) => {
+                  // Add voice message to chat
+                  const userMessage: Message = {
+                    id: Date.now().toString(),
+                    role: 'user',
+                    content: `🎤 ${message}`,
+                    timestamp: new Date()
+                  };
+                  setMessages(prev => [...prev, userMessage]);
+                }}
+                onResponseReceived={(response) => {
+                  // Add Earth's response to chat
+                  const assistantMessage: Message = {
+                    id: (Date.now() + 1).toString(),
+                    role: 'assistant',
+                    content: `🌍 ${response}`,
+                    timestamp: new Date()
+                  };
+                  setMessages(prev => [...prev, assistantMessage]);
+                }}
+              />
+            ) : (
+              <Card className="bg-slate-800/50 border-slate-700 h-[600px] flex flex-col">
               <CardHeader className="flex-shrink-0">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-white flex items-center">
-                    <Bot className="mr-2 h-5 w-5" />
-                    Oracle Earth AI
+                    <Globe className="mr-2 h-5 w-5" />
+                    Planet Earth
                   </CardTitle>
                   <Button
                     onClick={clearChat}
@@ -182,7 +236,7 @@ What would you like to explore today?`,
                   </Button>
                 </div>
                 <CardDescription className="text-gray-400">
-                  Global intelligence at your fingertips
+                  Your planet speaking through AI consciousness
                 </CardDescription>
               </CardHeader>
               
@@ -253,13 +307,13 @@ What would you like to explore today?`,
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder="Ask Oracle Earth about global affairs, conflicts, environment, or security..."
+                    placeholder="Ask Earth about its condition, conflicts, environment, or how to heal the planet..."
                     className="flex-1 bg-slate-700 text-white border border-slate-600 rounded-md px-3 py-2 resize-none"
                     rows={2}
                     disabled={loading}
                   />
                   <Button
-                    onClick={sendMessage}
+                    onClick={() => sendMessage()}
                     disabled={!inputMessage.trim() || loading}
                     className="bg-blue-600 hover:bg-blue-700"
                   >
@@ -268,6 +322,7 @@ What would you like to explore today?`,
                 </div>
               </div>
             </Card>
+            )}
           </div>
 
           {/* Sidebar */}

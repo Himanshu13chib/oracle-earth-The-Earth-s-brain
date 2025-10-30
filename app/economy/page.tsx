@@ -182,7 +182,7 @@ export default function EconomyPage() {
               >
                 <option value="">Select Country</option>
                 {economicData.map(data => (
-                  <option key={data.country} value={data.country}>{data.country}</option>
+                  <option key={data.id} value={data.country}>{data.country}</option>
                 ))}
               </select>
               
