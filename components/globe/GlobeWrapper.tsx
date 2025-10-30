@@ -1,10 +1,12 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { Suspense, useState } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Suspense, useState, useEffect } from 'react';
+import { AlertTriangle, RefreshCw, Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import SimpleGlobe from './SimpleGlobe';
+import { isWebGLSupported, isThreeJSCompatible } from '@/lib/webgl-utils';
 
 // Dynamically import Globe3D with no SSR
 const Globe3D = dynamic(() => import('./Globe3D'), {
@@ -30,31 +32,53 @@ interface GlobeWrapperProps {
 export default function GlobeWrapper(props: GlobeWrapperProps) {
   const [hasError, setHasError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [use3D, setUse3D] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    // Check if WebGL and Three.js are supported
+    if (!isWebGLSupported() || !isThreeJSCompatible()) {
+      setUse3D(false);
+    }
+  }, []);
 
   const handleRetry = () => {
     setHasError(false);
     setRetryCount(prev => prev + 1);
+    setUse3D(true);
   };
 
-  if (hasError) {
+  const handleUse2D = () => {
+    setUse3D(false);
+    setHasError(false);
+  };
+
+  // Show simple globe if not using 3D or if there's an error
+  if (!isClient || !use3D || hasError) {
     return (
-      <div className="flex items-center justify-center h-[600px] bg-slate-900 rounded-lg border border-slate-700">
-        <div className="text-center p-8">
-          <AlertTriangle className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">3D Globe Unavailable</h3>
-          <p className="text-gray-400 mb-4 max-w-md">
-            The 3D globe couldn't load. This might be due to WebGL compatibility issues or browser limitations.
-          </p>
-          <div className="space-y-2">
-            <Button onClick={handleRetry} className="bg-blue-600 hover:bg-blue-700">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Try Again
-            </Button>
-            <p className="text-xs text-gray-500">
-              Try refreshing the page or using a different browser
+      <div className="space-y-4">
+        {hasError && (
+          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-2 text-yellow-400 mb-2">
+              <AlertTriangle className="h-4 w-4" />
+              <span className="text-sm font-medium">3D Globe Failed to Load</span>
+            </div>
+            <p className="text-xs text-gray-400 mb-3">
+              Showing 2D visualization instead. This might be due to WebGL compatibility or browser limitations.
             </p>
+            <div className="flex gap-2">
+              <Button onClick={handleRetry} size="sm" variant="outline" className="text-xs">
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Retry 3D
+              </Button>
+              <Button onClick={handleUse2D} size="sm" variant="outline" className="text-xs">
+                Continue with 2D
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
+        <SimpleGlobe {...props} />
       </div>
     );
   }
