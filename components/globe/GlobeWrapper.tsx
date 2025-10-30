@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { Suspense, useState } from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 // Dynamically import Globe3D with no SSR
 const Globe3D = dynamic(() => import('./Globe3D'), {
@@ -69,10 +70,9 @@ export default function GlobeWrapper(props: GlobeWrapperProps) {
       </div>
     }>
       <div key={retryCount}>
-        <Globe3D 
-          {...props} 
-          onError={() => setHasError(true)}
-        />
+        <ErrorBoundary onError={() => setHasError(true)}>
+          <Globe3D {...props} />
+        </ErrorBoundary>
       </div>
     </Suspense>
   );

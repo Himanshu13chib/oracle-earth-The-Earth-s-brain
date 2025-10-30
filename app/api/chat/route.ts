@@ -18,17 +18,17 @@ export async function POST(request: Request) {
     }
 
     // Get context from recent data (with fallbacks)
-    let conflicts, environmentData, terrorismData;
+    let conflicts: any[] = [];
+    let environmentData: any[] = [];
+    let terrorismData: any[] = [];
+    
     try {
       conflicts = (await dbOperations.getConflicts()).slice(0, 5);
       environmentData = (await dbOperations.getEnvironmentData()).slice(0, 5);
       terrorismData = (await dbOperations.getTerrorismData()).slice(0, 5);
     } catch (error) {
       console.error('Error fetching context data:', error);
-      // Use empty arrays as fallback
-      conflicts = [];
-      environmentData = [];
-      terrorismData = [];
+      // Use empty arrays as fallback (already initialized above)
     }
     
     const context = `

@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     );
 
     return NextResponse.json({
-      id: result.lastInsertRowid,
+      id: result?.lastInsertRowid || Date.now(),
       probability: analysis.probability,
       factors: analysis.factors,
       reasoning: analysis.reasoning

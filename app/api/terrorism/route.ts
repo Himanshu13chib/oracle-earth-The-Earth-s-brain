@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       lastActivity
     );
     
-    return NextResponse.json({ id: result.lastInsertRowid, success: true });
+    return NextResponse.json({ id: result?.lastInsertRowid || Date.now(), success: true });
   } catch (error) {
     console.error('Database error:', error);
     return NextResponse.json({ error: 'Failed to insert terrorism data' }, { status: 500 });

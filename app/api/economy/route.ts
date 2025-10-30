@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       new Date().toISOString()
     );
     
-    return NextResponse.json({ id: result.lastInsertRowid, success: true });
+    return NextResponse.json({ id: result?.lastInsertRowid || Date.now(), success: true });
   } catch (error) {
     console.error('Database error:', error);
     return NextResponse.json({ error: 'Failed to insert economic data' }, { status: 500 });
