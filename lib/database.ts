@@ -119,19 +119,32 @@ export async function initializeDatabase() {
   `);
 }
 
-// Database operations
+// Import mock data for fallback
+import { mockConflicts, mockEnvironmentData, mockTerrorismData, mockChatHistory } from './mockData';
+
+// Database operations with fallbacks
 export const dbOperations = {
   // Conflicts
   async insertConflict(country1: string, country2: string, probability: number, factors: string, lastUpdated: string) {
-    return await db.execute({
-      sql: 'INSERT INTO conflicts (country1, country2, probability, factors, lastUpdated) VALUES (?, ?, ?, ?, ?)',
-      args: [country1, country2, probability, factors, lastUpdated]
-    });
+    try {
+      return await db.execute({
+        sql: 'INSERT INTO conflicts (country1, country2, probability, factors, lastUpdated) VALUES (?, ?, ?, ?, ?)',
+        args: [country1, country2, probability, factors, lastUpdated]
+      });
+    } catch (error) {
+      console.error('Database insert error:', error);
+      return null;
+    }
   },
   
   async getConflicts() {
-    const result = await db.execute('SELECT * FROM conflicts ORDER BY probability DESC');
-    return result.rows;
+    try {
+      const result = await db.execute('SELECT * FROM conflicts ORDER BY probability DESC');
+      return result.rows.length > 0 ? result.rows : mockConflicts;
+    } catch (error) {
+      console.error('Database query error:', error);
+      return mockConflicts;
+    }
   },
   
   async getConflictByCountries(country1: string, country2: string) {
@@ -151,8 +164,13 @@ export const dbOperations = {
   },
   
   async getEnvironmentData() {
-    const result = await db.execute('SELECT * FROM environment ORDER BY timestamp DESC');
-    return result.rows;
+    try {
+      const result = await db.execute('SELECT * FROM environment ORDER BY timestamp DESC');
+      return result.rows.length > 0 ? result.rows : mockEnvironmentData;
+    } catch (error) {
+      console.error('Database query error:', error);
+      return mockEnvironmentData;
+    }
   },
   
   async getEnvironmentByType(type: string) {
@@ -172,8 +190,13 @@ export const dbOperations = {
   },
   
   async getTerrorismData() {
-    const result = await db.execute('SELECT * FROM terrorism ORDER BY riskLevel DESC');
-    return result.rows;
+    try {
+      const result = await db.execute('SELECT * FROM terrorism ORDER BY riskLevel DESC');
+      return result.rows.length > 0 ? result.rows : mockTerrorismData;
+    } catch (error) {
+      console.error('Database query error:', error);
+      return mockTerrorismData;
+    }
   },
 
   // Economic
@@ -198,8 +221,13 @@ export const dbOperations = {
   },
   
   async getChatHistory() {
-    const result = await db.execute('SELECT * FROM chat_history ORDER BY timestamp DESC LIMIT 50');
-    return result.rows;
+    try {
+      const result = await db.execute('SELECT * FROM chat_history ORDER BY timestamp DESC LIMIT 50');
+      return result.rows.length > 0 ? result.rows : mockChatHistory;
+    } catch (error) {
+      console.error('Database query error:', error);
+      return mockChatHistory;
+    }
   }
 };
 

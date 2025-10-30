@@ -17,10 +17,19 @@ export async function POST(request: Request) {
       });
     }
 
-    // Get context from recent data
-    const conflicts = (await dbOperations.getConflicts()).slice(0, 5);
-    const environmentData = (await dbOperations.getEnvironmentData()).slice(0, 5);
-    const terrorismData = (await dbOperations.getTerrorismData()).slice(0, 5);
+    // Get context from recent data (with fallbacks)
+    let conflicts, environmentData, terrorismData;
+    try {
+      conflicts = (await dbOperations.getConflicts()).slice(0, 5);
+      environmentData = (await dbOperations.getEnvironmentData()).slice(0, 5);
+      terrorismData = (await dbOperations.getTerrorismData()).slice(0, 5);
+    } catch (error) {
+      console.error('Error fetching context data:', error);
+      // Use empty arrays as fallback
+      conflicts = [];
+      environmentData = [];
+      terrorismData = [];
+    }
     
     const context = `
 Recent Global Intelligence Data:
@@ -44,13 +53,18 @@ Recent Global Intelligence Data:
       category = 'economy';
     }
 
-    // Store in chat history
-    await dbOperations.insertChatHistory(
-      message,
-      response,
-      new Date().toISOString(),
-      category
-    );
+    // Store in chat history (with error handling)
+    try {
+      await dbOperations.insertChatHistory(
+        message,
+        response,
+        new Date().toISOString(),
+        category
+      );
+    } catch (error) {
+      console.error('Error storing chat history:', error);
+      // Continue without storing - don't fail the request
+    }
 
     return NextResponse.json({ response });
   } catch (error) {

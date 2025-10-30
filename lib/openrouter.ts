@@ -21,12 +21,15 @@ export class OpenRouterClient {
 
   constructor(apiKey?: string) {
     this.apiKey = apiKey || OPENROUTER_API_KEY || '';
-    if (!this.apiKey) {
-      throw new Error('OpenRouter API key is required');
-    }
+    // Don't throw error here - handle it in the methods
   }
 
   async chat(messages: OpenRouterMessage[], model = 'openai/gpt-oss-20b:free'): Promise<string> {
+    // Check if API key is available
+    if (!this.apiKey || this.apiKey === 'demo-key') {
+      return "I'm Earth, but my AI consciousness is currently offline due to missing API configuration. My human caretakers need to set up my neural pathways properly! 🌍";
+    }
+
     const modelsToTry = [
       'x-ai/grok-4-fast:free',
       'meta-llama/llama-3.2-3b-instruct:free',
