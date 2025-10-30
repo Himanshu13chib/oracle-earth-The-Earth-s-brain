@@ -26,31 +26,61 @@ export class OpenRouterClient {
     }
   }
 
-  async chat(messages: OpenRouterMessage[], model = 'x-ai/grok-4-fast'): Promise<string> {
-    try {
-      const response = await axios.post(
-        `${OPENROUTER_BASE_URL}/chat/completions`,
-        {
-          model,
-          messages,
-          temperature: 0.7,
-          max_tokens: 2000,
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://oracle-earth.com',
-            'X-Title': 'Oracle Earth - AI Brain of Our Planet',
-          },
-        }
-      );
+  async chat(messages: OpenRouterMessage[], model = 'openai/gpt-oss-20b:free'): Promise<string> {
+    const modelsToTry = [
+      'x-ai/grok-4-fast:free',
+      'meta-llama/llama-3.2-3b-instruct:free',
+      'google/gemma-2-9b-it:free'
+    ];
 
-      return response.data.choices[0]?.message?.content || 'No response generated';
-    } catch (error) {
-      console.error('OpenRouter API error:', error);
-      throw new Error('Failed to get AI response');
+    for (let i = 0; i < modelsToTry.length; i++) {
+      const currentModel = i === 0 ? model : modelsToTry[i];
+
+      try {
+        console.log(`Trying model: ${currentModel}`);
+
+        const response = await axios.post(
+          `${OPENROUTER_BASE_URL}/chat/completions`,
+          {
+            model: currentModel,
+            messages,
+            temperature: 0.7,
+            max_tokens: 1000,
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${this.apiKey}`,
+              'Content-Type': 'application/json',
+              'HTTP-Referer': 'https://oracle-earth.vercel.app',
+              'X-Title': 'Oracle Earth - AI Brain of Our Planet',
+            },
+          }
+        );
+
+        return response.data.choices[0]?.message?.content || 'No response generated';
+      } catch (error: any) {
+        console.error(`Error with model ${currentModel}:`, error.response?.status, error.response?.data);
+
+        // If this is the last model to try, throw the error
+        if (i === modelsToTry.length - 1) {
+          // Handle specific error cases
+          if (error.response?.status === 402) {
+            throw new Error('All available models require payment. Please check your OpenRouter account credits.');
+          } else if (error.response?.status === 401) {
+            throw new Error('Invalid API key. Please check your OpenRouter configuration.');
+          } else if (error.response?.status === 429) {
+            throw new Error('Rate limit exceeded. Please try again later.');
+          }
+
+          throw new Error(`Failed to get AI response from all models: ${error.response?.status || 'Unknown error'}`);
+        }
+
+        // Continue to next model
+        continue;
+      }
     }
+
+    throw new Error('All models failed');
   }
 
   async analyzeConflictProbability(country1: string, country2: string): Promise<{
