@@ -10,6 +10,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
+    // Check if API key is available
+    if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'demo-key') {
+      return NextResponse.json({ 
+        response: "I'm Earth, but I'm currently experiencing some technical difficulties with my AI consciousness. My human caretakers need to configure my neural pathways (API keys) properly. Please check back soon! 🌍" 
+      });
+    }
+
     // Get context from recent data
     const conflicts = (await dbOperations.getConflicts()).slice(0, 5);
     const environmentData = (await dbOperations.getEnvironmentData()).slice(0, 5);

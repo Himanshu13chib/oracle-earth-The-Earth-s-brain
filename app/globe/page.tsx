@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Globe3D from '@/components/globe/Globe3D';
+import GlobeWrapper from '@/components/globe/GlobeWrapper';
 import TimeMachine from '@/components/globe/TimeMachine';
 import CrisisDashboard from '@/components/dashboard/CrisisDashboard';
 import WhatIfSimulator from '@/components/simulator/WhatIfSimulator';
@@ -252,7 +252,7 @@ export default function GlobePage() {
             </CardHeader>
             <CardContent className="p-0">
               <div className="relative">
-                <Globe3D conflicts={conflicts} environmentData={environmentData} />
+                <GlobeWrapper conflicts={conflicts} environmentData={environmentData} />
                 
                 {/* Year Overlay */}
                 {currentYear !== 2024 && (

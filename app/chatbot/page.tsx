@@ -3,9 +3,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import VoiceChat from '@/components/voice/VoiceChat';
+import dynamic from 'next/dynamic';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { MessageCircle, Send, Bot, User, Globe, Zap, History, Trash2, Mic } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+// Dynamically import VoiceChat to avoid SSR issues
+const VoiceChat = dynamic(() => import('@/components/voice/VoiceChat'), {
+  ssr: false,
+  loading: () => <div className="text-blue-400">Loading voice chat...</div>
+});
 
 interface Message {
   id: string;
@@ -123,7 +130,9 @@ What would you like to know about your planet?`,
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'I apologize, but I encountered an error processing your request. Please try again.',
+        content: `🌍 I'm Earth, but I'm currently experiencing some technical difficulties with my consciousness. This might be due to missing API configuration or network issues. Please try again later!
+
+Error details: ${error instanceof Error ? error.message : 'Unknown error'}`,
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -195,9 +204,20 @@ What aspect of my condition would you like to understand today?`,
               </div>
             </div>
             {isVoiceMode ? (
-              <VoiceChat 
-                onVoiceMessage={(message) => {
-                  // Add voice message to chat
+              <ErrorBoundary fallback={
+                <div className="p-4 bg-slate-800 rounded-lg border border-slate-700">
+                  <p className="text-yellow-400">Voice chat is not available. This might be due to browser compatibility or missing permissions.</p>
+                  <Button 
+                    onClick={() => setIsVoiceMode(false)}
+                    className="mt-2 bg-blue-600 hover:bg-blue-700"
+                  >
+                    Switch to Text Chat
+                  </Button>
+                </div>
+              }>
+                <VoiceChat 
+                  onVoiceMessage={(message) => {
+                    // Add voice message to chat
                   const userMessage: Message = {
                     id: Date.now().toString(),
                     role: 'user',
@@ -217,6 +237,7 @@ What aspect of my condition would you like to understand today?`,
                   setMessages(prev => [...prev, assistantMessage]);
                 }}
               />
+              </ErrorBoundary>
             ) : (
               <Card className="bg-slate-800/50 border-slate-700 h-[600px] flex flex-col">
               <CardHeader className="flex-shrink-0">
