@@ -1,9 +1,9 @@
 import { createClient } from '@libsql/client';
-import path from 'path';
 
-const dbPath = path.join(process.cwd(), 'oracle-earth.db');
+// Use Turso for production, local file for development
 const db = createClient({
-  url: `file:${dbPath}`
+  url: process.env.TURSO_DATABASE_URL || 'file:oracle-earth.db',
+  authToken: process.env.TURSO_AUTH_TOKEN
 });
 
 export interface ConflictData {
