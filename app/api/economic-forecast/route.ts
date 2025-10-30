@@ -50,7 +50,7 @@ Economic forecasts are subject to uncertainty and should be used in conjunction 
     // Fallback forecast
     const fallbackForecast = `
 ECONOMIC FORECAST REPORT
-Country: ${request.body?.country || 'Selected Country'}
+Country: Selected Country
 Forecast Period: Next 12-24 Months
 Generated: ${new Date().toLocaleDateString()}
 

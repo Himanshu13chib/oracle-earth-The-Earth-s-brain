@@ -52,8 +52,8 @@ This analysis is based on open-source intelligence and should be supplemented wi
     // Fallback analysis
     const fallbackAnalysis = `
 COUNTER-TERRORISM ANALYSIS REPORT
-Country: ${request.body?.country || 'Selected Country'}
-Organization: ${request.body?.organization || 'Target Organization'}
+Country: Selected Country
+Organization: Target Organization
 Risk Level: MEDIUM
 
 THREAT ASSESSMENT:

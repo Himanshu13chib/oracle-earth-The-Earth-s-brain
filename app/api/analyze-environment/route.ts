@@ -51,8 +51,8 @@ LONG-TERM STRATEGY:
     // Fallback recommendations
     const fallbackRecommendations = `
 ENVIRONMENTAL ANALYSIS REPORT
-Region: ${request.body?.region || 'Selected Region'}
-Type: ${request.body?.type || 'Environmental Factor'}
+Region: Selected Region
+Type: Environmental Factor
 
 ANALYSIS:
 Current environmental conditions require immediate attention and coordinated response efforts.
