@@ -8,6 +8,7 @@ import CrisisDashboard from '@/components/dashboard/CrisisDashboard';
 import WhatIfSimulator from '@/components/simulator/WhatIfSimulator';
 import VoiceChat from '@/components/voice/VoiceChat';
 import { Clock, Radio, Brain, Mic, Zap, Globe } from 'lucide-react';
+import NewsWidget from '@/components/news/NewsWidget';
 
 export default function AdvancedPage() {
   const [activeFeature, setActiveFeature] = useState<'time' | 'crisis' | 'simulator' | 'voice'>('time');

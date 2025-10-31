@@ -11,8 +11,10 @@ import {
   Brain,
   Zap,
   Eye,
-  Target
+  Target,
+  Radio
 } from 'lucide-react';
+import NewsWidget from '@/components/news/NewsWidget';
 
 const features = [
   {
@@ -172,6 +174,38 @@ export default function Home() {
                 </Link>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* Real-Time Intelligence Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+              <Radio className="h-8 w-8 text-red-500 animate-pulse" />
+              Live Global Intelligence Feed
+            </h2>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Real-time updates on global conflicts, environmental changes, security threats, 
+              and economic developments from around the world.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Breaking News */}
+            <NewsWidget 
+              showBreaking={true}
+              limit={4}
+              category="all"
+            />
+            
+            {/* Latest Intelligence */}
+            <NewsWidget 
+              showBreaking={false}
+              limit={4}
+              category="all"
+            />
           </div>
         </div>
       </section>

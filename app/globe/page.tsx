@@ -8,6 +8,7 @@ import WhatIfSimulator from '@/components/simulator/WhatIfSimulator';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RefreshCw, Globe, AlertTriangle, Leaf, Clock, Radio, Brain } from 'lucide-react';
+import NewsWidget from '@/components/news/NewsWidget';
 
 interface ConflictData {
   id: number;
@@ -204,6 +205,13 @@ export default function GlobePage() {
           <TimeMachine 
             currentYear={currentYear}
             onTimeChange={setCurrentYear}
+          />
+          
+          {/* Real-Time News */}
+          <NewsWidget 
+            compact={true}
+            limit={3}
+            category="conflict"
           />
           
           {/* Crisis Dashboard (when active) */}
